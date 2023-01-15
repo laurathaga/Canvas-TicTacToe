@@ -22,7 +22,6 @@ class Canvas {
                 mousex: event.pageX,
                 mousey: event.pageY,
             };
-            console.log(this.mousePosition);
         });
     }
 
@@ -47,6 +46,13 @@ class Canvas {
     }
 }
 
+interface FieldCoord {
+    fieldX: number;
+    fieldY: number;
+    id: number;
+    value?: 'x' | 'o';
+};
+
 class TicTacToe {
     private readonly FIELD_WIDTH = 150;
     private readonly FIELD_HEIGHT = 150;
@@ -54,7 +60,7 @@ class TicTacToe {
     private readonly ROWS = 3;
     private countID: number = 0;
     private readonly strokeColor = 'white';
-    private fieldCoordinates: { fieldX: number, fieldY: number, id: number }[] = [];
+    private fieldCoordinates: FieldCoord[] = [];
 
     constructor( private canvas: Canvas ) {}
 
