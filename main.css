@@ -1,0 +1,27 @@
+:root { 
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+*, *::after, *::before {
+    box-sizing: inherit;
+}
+
+body {
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    color: white;
+    height: 100vh;
+    position: relative;
+}
+
+#cv {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #111;
+}
