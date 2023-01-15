@@ -1,6 +1,7 @@
 "use strict";
 class Canvas {
     constructor() {
+        this.mousePosition = { mousex: null, mousey: null };
         this.canvas = document.querySelector('#cv');
         this.cvH = this.canvas.height = window.innerHeight;
         this.cvW = this.canvas.width = window.innerWidth;
@@ -8,10 +9,16 @@ class Canvas {
         this.leftBorder = 0;
         this.topBorder = 0;
         this.bottomBorder = this.cvH;
+        this.canvas.addEventListener('click', (event) => {
+            this.mousePosition = {
+                mousex: event.pageX,
+                mousey: event.pageY,
+            };
+            console.log(this.mousePosition);
+        });
     }
-    get ctx() {
-        return this.canvas.getContext('2d');
-    }
+    get ctx() { return this.canvas.getContext('2d'); }
+    get mousePositions() { return this.mousePosition; }
     get size() {
         return {
             height: this.cvH,
@@ -26,8 +33,6 @@ class Canvas {
             bot: this.bottomBorder,
         };
     }
-}
-class Mouse {
 }
 class TicTacToe {
     constructor(canvas) {
@@ -59,10 +64,13 @@ class TicTacToe {
             }
         }
     }
+    update() {
+    }
 }
 const myCanvas = new Canvas();
 const game = new TicTacToe(myCanvas);
 function render() {
     game.draw();
+    // window.requestAnimationFrame(render);
 }
 window.onload = render;
