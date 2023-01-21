@@ -66,7 +66,7 @@ class TicTacToe {
     private fieldCoordinates: FieldCoord[] = [];
     private readonly symbol: ['X','O'] = ['X', 'O'];
     private playerIndex: number;
-    private positions: boolean[] = new Array(9).fill(false);
+    private positions = new Array(this.COLUMNS * this.ROWS);
     private player: string;
     private ctx: CanvasRenderingContext2D;
     private posXOffset: number;
@@ -107,14 +107,21 @@ class TicTacToe {
         this.player = this.symbol[this.playerIndex];
     }
 
+    setCurrentFieldIndex() {
+        const { mousex, mousey } = this.canvas.mousePositions;
+        const currentCol = Math.floor((mousex! - this.posXOffset) / this.FIELD_WIDTH);
+        const currentRow = Math.floor((mousey! - this.posYOffset) / this.FIELD_HEIGHT);
+        const currentIndex = currentCol + this.COLUMNS * currentRow;
+    
+        if (this.positions[currentIndex]) return;
+    
+        this.positions[currentIndex] = this.player;
+        console.log(this.positions);
+    }
+
     update(): void {
         this.setPlayerSymbol();
-        const { mousex, mousey } = this.canvas.mousePositions;
-        const currentField = Math.floor((mousex! - this.posXOffset) / this.FIELD_WIDTH);
-
-        if (this.positions[currentField]) return;
-
-        this.positions[currentField] = true;
+        this.setCurrentFieldIndex();
     }
     
     init(): void {

@@ -48,7 +48,7 @@ class TicTacToe {
         this.strokeColor = 'white';
         this.fieldCoordinates = [];
         this.symbol = ['X', 'O'];
-        this.positions = new Array(9).fill(false);
+        this.positions = new Array(this.COLUMNS * this.ROWS);
         this.playerIndex = Math.random() > 0.5 ? 1 : 0;
         this.player = this.symbol[this.playerIndex];
         this.update = this.update.bind(this);
@@ -76,14 +76,19 @@ class TicTacToe {
         this.playerIndex = ++this.playerIndex & 1 ? 1 : 0;
         this.player = this.symbol[this.playerIndex];
     }
+    setCurrentFieldIndex() {
+        const { mousex, mousey } = this.canvas.mousePositions;
+        const currentCol = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
+        const currentRow = Math.floor((mousey - this.posYOffset) / this.FIELD_HEIGHT);
+        const currentIndex = currentCol + this.COLUMNS * currentRow;
+        if (this.positions[currentIndex])
+            return;
+        this.positions[currentIndex] = this.player;
+        console.log(this.positions);
+    }
     update() {
         this.setPlayerSymbol();
-        const { mousex, mousey } = this.canvas.mousePositions;
-        const currentField = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
-        if (this.positions[currentField])
-            return;
-        this.positions[currentField] = true;
-        console.log(this.positions);
+        this.setCurrentFieldIndex();
     }
     init() {
         this.draw();
