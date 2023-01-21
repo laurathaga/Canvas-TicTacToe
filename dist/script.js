@@ -51,25 +51,24 @@ class TicTacToe {
         this.positions = new Array(9).fill(false);
         this.playerIndex = Math.random() > 0.5 ? 1 : 0;
         this.player = this.symbol[this.playerIndex];
-        this.setPlayerSymbol = this.setPlayerSymbol.bind(this);
-        this.canvas.listenForClicks(this.setPlayerSymbol);
+        this.update = this.update.bind(this);
+        this.canvas.listenForClicks(this.update);
+        this.ctx = this.canvas.ctx;
+        this.posXOffset = this.canvas.size.width / 2 - ((this.COLUMNS * this.FIELD_WIDTH) * 0.5);
+        this.posYOffset = this.canvas.size.height / 2 - ((this.ROWS * this.FIELD_HEIGHT) * 0.5);
     }
     draw() {
-        const ctx = this.canvas.ctx;
-        const { width, height } = this.canvas.size;
-        const posXOffset = width / 2 - ((this.COLUMNS * this.FIELD_WIDTH) * 0.5);
-        const posYOffset = height / 2 - ((this.ROWS * this.FIELD_HEIGHT) * 0.5);
-        ctx.strokeStyle = this.strokeColor;
+        this.ctx.strokeStyle = this.strokeColor;
         for (let y = 0; y < this.ROWS; y++) {
             for (let x = 0; x < this.COLUMNS; x++) {
-                const psX = (x * this.FIELD_WIDTH) + posXOffset;
-                const psY = (y * this.FIELD_HEIGHT) + posYOffset;
+                const psX = (x * this.FIELD_WIDTH) + this.posXOffset;
+                const psY = (y * this.FIELD_HEIGHT) + this.posYOffset;
                 this.fieldCoordinates.push({
                     fieldX: psX,
                     fieldY: psY,
                     id: ++this.countID,
                 });
-                ctx.strokeRect(psX, psY, this.FIELD_WIDTH, this.FIELD_HEIGHT);
+                this.ctx.strokeRect(psX, psY, this.FIELD_WIDTH, this.FIELD_HEIGHT);
             }
         }
     }
@@ -78,10 +77,16 @@ class TicTacToe {
         this.player = this.symbol[this.playerIndex];
     }
     update() {
-        this.draw();
+        this.setPlayerSymbol();
+        const { mousex, mousey } = this.canvas.mousePositions;
+        const currentField = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
+        if (this.positions[currentField])
+            return;
+        this.positions[currentField] = true;
+        console.log(this.positions);
     }
     init() {
-        this.update();
+        this.draw();
     }
 }
 function render() {
