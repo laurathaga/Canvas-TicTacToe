@@ -9,13 +9,6 @@ class Canvas {
         this.leftBorder = 0;
         this.topBorder = 0;
         this.bottomBorder = this.cvH;
-        this.canvas.addEventListener('click', (event) => {
-            this.mousePosition = {
-                mousex: event.pageX,
-                mousey: event.pageY,
-            };
-            console.log(this.mousePosition);
-        });
     }
     get ctx() { return this.canvas.getContext('2d'); }
     get mousePositions() { return this.mousePosition; }
@@ -33,7 +26,17 @@ class Canvas {
             bot: this.bottomBorder,
         };
     }
+    listenForClicks(callback) {
+        this.canvas.addEventListener('click', (event) => {
+            this.mousePosition = {
+                mousex: event.pageX,
+                mousey: event.pageY,
+            };
+            callback();
+        });
+    }
 }
+;
 class TicTacToe {
     constructor(canvas) {
         this.canvas = canvas;
@@ -44,6 +47,12 @@ class TicTacToe {
         this.countID = 0;
         this.strokeColor = 'white';
         this.fieldCoordinates = [];
+        this.symbol = ['X', 'O'];
+        this.positions = new Array(9).fill(false);
+        this.playerIndex = Math.random() > 0.5 ? 1 : 0;
+        this.player = this.symbol[this.playerIndex];
+        this.setPlayerSymbol = this.setPlayerSymbol.bind(this);
+        this.canvas.listenForClicks(this.setPlayerSymbol);
     }
     draw() {
         const ctx = this.canvas.ctx;
@@ -64,13 +73,20 @@ class TicTacToe {
             }
         }
     }
+    setPlayerSymbol() {
+        this.playerIndex = ++this.playerIndex & 1 ? 1 : 0;
+        this.player = this.symbol[this.playerIndex];
+    }
     update() {
+        this.draw();
+    }
+    init() {
+        this.update();
     }
 }
-const myCanvas = new Canvas();
-const game = new TicTacToe(myCanvas);
 function render() {
-    game.draw();
-    // window.requestAnimationFrame(render);
+    const myCanvas = new Canvas();
+    const game = new TicTacToe(myCanvas);
+    game.init();
 }
 window.onload = render;

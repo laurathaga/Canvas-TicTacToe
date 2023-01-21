@@ -16,13 +16,6 @@ class Canvas {
         this.leftBorder = 0;
         this.topBorder = 0;
         this.bottomBorder = this.cvH;
-
-        this.canvas.addEventListener('click', (event: MouseEvent) => {
-            this.mousePosition = {
-                mousex: event.pageX,
-                mousey: event.pageY,
-            };
-        });
     }
 
     get ctx(): CanvasRenderingContext2D { return this.canvas.getContext('2d')! }
@@ -44,13 +37,23 @@ class Canvas {
             bot: this.bottomBorder,
         };
     }
+
+    listenForClicks(callback: () => void) {
+        this.canvas.addEventListener('click', (event: MouseEvent) => {
+            this.mousePosition = {
+                mousex: event.pageX,
+                mousey: event.pageY,
+            };
+
+            callback();
+        });
+    }
 }
 
 interface FieldCoord {
     fieldX: number;
     fieldY: number;
     id: number;
-    value?: 'x' | 'o';
 };
 
 class TicTacToe {
@@ -61,8 +64,17 @@ class TicTacToe {
     private countID: number = 0;
     private readonly strokeColor = 'white';
     private fieldCoordinates: FieldCoord[] = [];
+    private readonly symbol: ['X','O'] = ['X', 'O'];
+    private playerIndex: number;
+    private positions: boolean[] = new Array(9).fill(false);
+    private player: string;
 
-    constructor( private canvas: Canvas ) {}
+    constructor( private canvas: Canvas ) {
+        this.playerIndex = Math.random() > 0.5 ? 1 : 0;
+        this.player = this.symbol[this.playerIndex];
+        this.setPlayerSymbol = this.setPlayerSymbol.bind(this);
+        this.canvas.listenForClicks(this.setPlayerSymbol);
+    }
 
     draw(): void {
         const ctx = this.canvas.ctx!;
@@ -89,17 +101,24 @@ class TicTacToe {
         }
     }
 
-    update(): void{
+    setPlayerSymbol(): void{
+        this.playerIndex = ++this.playerIndex & 1 ? 1 : 0;
+        this.player = this.symbol[this.playerIndex];
+    }
 
+    update(): void{
+        this.draw();
+    }
+
+    init(): void {
+        this.update();
     }
 }
 
-const myCanvas: Canvas = new Canvas();
-const game = new TicTacToe(myCanvas);
-
 function render() {
-    game.draw();
-    // window.requestAnimationFrame(render);
+    const myCanvas: Canvas = new Canvas();
+    const game = new TicTacToe(myCanvas);
+    game.init();
 }
 
 window.onload = render;
