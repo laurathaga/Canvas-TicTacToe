@@ -41,17 +41,19 @@ class TicTacToe {
         this.FIELD_HEIGHT = 150;
         this.COLUMNS = 3;
         this.ROWS = 3;
-        this.countID = 0;
         this.strokeColor = 'white';
         this.symbol = ['X', 'O'];
         this.positions = new Array(this.COLUMNS * this.ROWS);
+        this.players = [['X', this.X.bind(this)], ['O', this.O.bind(this)]];
         this.playerIndex = Math.random() > 0.5 ? 1 : 0;
-        this.player = this.symbol[this.playerIndex];
+        this.player = this.players[this.playerIndex];
         this.update = this.update.bind(this);
         this.canvas.listenForClicks(this.update);
         this.ctx = this.canvas.ctx;
         this.posXOffset = this.canvas.size.halfX - ((this.COLUMNS * this.FIELD_WIDTH) * 0.5);
         this.posYOffset = this.canvas.size.halfY - ((this.ROWS * this.FIELD_HEIGHT) * 0.5);
+        this.halfFieldX = this.FIELD_WIDTH * 0.5;
+        this.halfFieldY = this.FIELD_HEIGHT * 0.5;
     }
     draw() {
         this.ctx.strokeStyle = this.strokeColor;
@@ -63,9 +65,30 @@ class TicTacToe {
             }
         }
     }
+    X(x, y) {
+        const distance = 0.6;
+        this.ctx.beginPath();
+        this.ctx.lineCap = 'round';
+        this.ctx.lineWidth = 6;
+        this.ctx.strokeStyle = 'blue';
+        this.ctx.moveTo(x - this.halfFieldX * distance, y - this.halfFieldY * distance);
+        this.ctx.lineTo(x + this.halfFieldX * distance, y + this.halfFieldY * distance);
+        this.ctx.moveTo(x + this.halfFieldX * distance, y - this.halfFieldY * distance);
+        this.ctx.lineTo(x - this.halfFieldX * distance, y + this.halfFieldY * distance);
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
+    O(x, y, radius) {
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = 'red';
+        this.ctx.lineWidth = 6;
+        this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
     setPlayerSymbol() {
         this.playerIndex = ++this.playerIndex & 1 ? 1 : 0;
-        this.player = this.symbol[this.playerIndex];
+        this.player = this.players[this.playerIndex];
     }
     setCurrentFieldIndex() {
         const { mousex, mousey } = this.canvas.mousePositions;
@@ -79,10 +102,11 @@ class TicTacToe {
             const currentCol = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
             const currentRow = Math.floor((mousey - this.posYOffset) / this.FIELD_HEIGHT);
             const currentIndex = currentCol + this.COLUMNS * currentRow;
-            const fieldCenterX = ((currentCol + 1) * this.FIELD_WIDTH - (this.FIELD_WIDTH * 0.5)) + this.posXOffset;
-            const fieldCenterY = ((currentRow + 1) * this.FIELD_HEIGHT - (this.FIELD_HEIGHT * 0.5)) + this.posYOffset;
+            const fieldCenterX = ((currentCol + 1) * this.FIELD_WIDTH - this.halfFieldX) + this.posXOffset;
+            const fieldCenterY = ((currentRow + 1) * this.FIELD_HEIGHT - this.halfFieldY) + this.posYOffset;
+            this.player[1](fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
             if (!this.positions[currentIndex])
-                this.positions[currentIndex] = this.player;
+                this.positions[currentIndex] = this.player[0];
         }
     }
     update() {
