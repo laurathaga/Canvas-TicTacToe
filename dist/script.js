@@ -69,12 +69,19 @@ class TicTacToe {
     }
     setCurrentFieldIndex() {
         const { mousex, mousey } = this.canvas.mousePositions;
-        const currentCol = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
-        const currentRow = Math.floor((mousey - this.posYOffset) / this.FIELD_HEIGHT);
-        const currentIndex = currentCol + this.COLUMNS * currentRow;
-        if (!this.positions[currentIndex])
-            this.positions[currentIndex] = this.player;
-        console.log(this.positions);
+        if (typeof mousex === 'number' && typeof mousey === 'number') {
+            // check if mouse is outside the grid
+            if (mousex <= this.posXOffset ||
+                mousex >= this.posXOffset + (this.FIELD_WIDTH * this.COLUMNS) ||
+                mousey <= this.posYOffset ||
+                mousey >= this.posYOffset + (this.FIELD_HEIGHT * this.ROWS))
+                return;
+            const currentCol = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
+            const currentRow = Math.floor((mousey - this.posYOffset) / this.FIELD_HEIGHT);
+            const currentIndex = currentCol + this.COLUMNS * currentRow;
+            if (!this.positions[currentIndex])
+                this.positions[currentIndex] = this.player;
+        }
     }
     update() {
         this.setPlayerSymbol();
