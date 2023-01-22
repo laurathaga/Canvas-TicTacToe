@@ -101,6 +101,8 @@ class TicTacToe {
             const currentCol = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
             const currentRow = Math.floor((mousey - this.posYOffset) / this.FIELD_HEIGHT);
             const currentIndex = currentCol + this.COLUMNS * currentRow;
+            const fieldCenterX = ((currentCol + 1) * this.FIELD_WIDTH - (this.FIELD_WIDTH * 0.5)) + this.posXOffset;
+            const fieldCenterY = ((currentRow + 1) * this.FIELD_HEIGHT - (this.FIELD_HEIGHT * 0.5)) + this.posYOffset;
         
             if (!this.positions[currentIndex]) this.positions[currentIndex] = this.player;
         }
