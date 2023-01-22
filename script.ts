@@ -63,7 +63,10 @@ class TicTacToe {
     private halfFieldY: number;
 
     constructor( private canvas: Canvas ) {
-        this.players = [['X', this.X.bind(this)], ['O', this.O.bind(this)]];
+        this.players = [
+            ['X', this.X.bind(this)],
+            ['O', this.O.bind(this)]
+        ];
         this.playerIndex = Math.random() > 0.5 ? 1 : 0;
         this.player = this.players[this.playerIndex];
         this.update = this.update.bind(this);
@@ -133,9 +136,11 @@ class TicTacToe {
             const fieldCenterX = ((currentCol + 1) * this.FIELD_WIDTH - this.halfFieldX) + this.posXOffset;
             const fieldCenterY = ((currentRow + 1) * this.FIELD_HEIGHT - this.halfFieldY) + this.posYOffset;
 
-            this.player[1](fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
+            const [value, callback] = this.player;
 
-            if (!this.positions[currentIndex]) this.positions[currentIndex] = this.player[0];
+            callback(fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
+
+            if (!this.positions[currentIndex]) this.positions[currentIndex] = value;
         }
     }
 
