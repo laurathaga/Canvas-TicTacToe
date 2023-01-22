@@ -42,7 +42,6 @@ class TicTacToe {
         this.COLUMNS = 3;
         this.ROWS = 3;
         this.strokeColor = 'white';
-        this.symbol = ['X', 'O'];
         this.positions = new Array(this.COLUMNS * this.ROWS);
         this.players = [['X', this.X.bind(this)], ['O', this.O.bind(this)]];
         this.playerIndex = Math.random() > 0.5 ? 1 : 0;

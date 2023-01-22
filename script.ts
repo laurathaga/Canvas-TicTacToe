@@ -52,7 +52,6 @@ class TicTacToe {
     private readonly COLUMNS = 3;
     private readonly ROWS = 3;
     private readonly strokeColor = 'white';
-    private readonly symbol: ['X','O'] = ['X', 'O'];
     private players: [Player, Player]; 
     private playerIndex: number;
     private positions = new Array(this.COLUMNS * this.ROWS);
