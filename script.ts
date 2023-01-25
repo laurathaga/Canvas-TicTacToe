@@ -144,7 +144,7 @@ class TicTacToe {
         }
     }
 
-    update(): void {
+    private update(): void {
         this.setPlayerSymbol();
         this.setCurrentFieldIndex();
     }
