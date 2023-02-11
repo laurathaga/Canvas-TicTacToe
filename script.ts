@@ -137,15 +137,20 @@ class TicTacToe {
             const fieldCenterY = ((currentRow + 1) * this.FIELD_HEIGHT - this.halfFieldY) + this.posYOffset;
 
             const [value, callback] = this.player;
-
-            callback(fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
-
-            if (!this.positions[currentIndex]) this.positions[currentIndex] = value;
+            
+            // When clicked if the block contains the same value (O or X) as the current player
+            // then return and dont change the turn of players
+            if (this.positions[currentIndex] === value) return;
+            
+            if (!this.positions[currentIndex]) {
+                callback(fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
+                this.setPlayerSymbol();
+                this.positions[currentIndex] = value;
+            }
         }
     }
 
     private update(): void {
-        this.setPlayerSymbol();
         this.setCurrentFieldIndex();
     }
     
@@ -154,10 +159,10 @@ class TicTacToe {
     }
 }
 
-function render() {
+function renderGame() {
     const myCanvas: Canvas = new Canvas();
     const game = new TicTacToe(myCanvas);
     game.init();
 }
 
-window.onload = render;
+window.onload = renderGame;
