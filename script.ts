@@ -81,6 +81,7 @@ class TicTacToe {
     private draw(): void {
         this.ctx.strokeStyle = this.strokeColor;
         
+        // draw the 3x3 grid using the 2d array 
         for(let y = 0; y < this.ROWS; y++) {
             for(let x = 0; x < this.COLUMNS; x++) {
                 const psX = (x * this.FIELD_WIDTH) + this.posXOffset; 
@@ -114,6 +115,9 @@ class TicTacToe {
     }
 
     private setPlayerSymbol() {
+        // determines the playrers turn based on 1 | 0 value
+        // since we store both players inside an tuple, on each click we flip between 1 and 0
+        // and select the correct player
         this.playerIndex = ++this.playerIndex & 1 ? 1 : 0;
         this.player = this.players[this.playerIndex];
     }
@@ -129,10 +133,16 @@ class TicTacToe {
                 mousey <= this.posYOffset || 
                 mousey >= this.posYOffset + (this.FIELD_HEIGHT * this.ROWS)
             ) return;
-    
+
+            // currentCol -> Find the current column where the mouse has been clicked
+            // currentRow -> Find the current row where the mouse has been clicked
+            // currentIndex -> Find the current index of the block clicked so that we can store it inside the array
             const currentCol = Math.floor((mousex - this.posXOffset) / this.FIELD_WIDTH);
             const currentRow = Math.floor((mousey - this.posYOffset) / this.FIELD_HEIGHT);
             const currentIndex = currentCol + this.COLUMNS * currentRow;
+
+            // Find the center of X-axes and Y-axes inside the block clicked 
+            // so that you can draw the shape based on the players value
             const fieldCenterX = ((currentCol + 1) * this.FIELD_WIDTH - this.halfFieldX) + this.posXOffset;
             const fieldCenterY = ((currentRow + 1) * this.FIELD_HEIGHT - this.halfFieldY) + this.posYOffset;
 
@@ -142,6 +152,9 @@ class TicTacToe {
             // then return and dont change the turn of players
             if (this.positions[currentIndex] === value) return;
             
+            // If the current block is empty then proceed to add the current value to that position, and 
+            // draw the shape inside that block
+            // also update the turn of players
             if (!this.positions[currentIndex]) {
                 callback(fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
                 this.setPlayerSymbol();
@@ -150,10 +163,12 @@ class TicTacToe {
         }
     }
 
+    // this function is called evertime you click the mouse inside the tictactoc table
     private update(): void {
         this.setCurrentFieldIndex();
     }
     
+    // draws the table on each frame, and updates the columns when encountering an interaction
     init(): void {
         this.draw();
     }
