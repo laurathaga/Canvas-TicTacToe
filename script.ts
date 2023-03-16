@@ -44,7 +44,7 @@ class Canvas {
     }
 }
 
-type Player = [value: string, callback: (...args: number[]) => void];
+type Player = [value: string, callback: (...args: number[]) => void, positions: number[]];
 
 class TicTacToe {
     private readonly FIELD_WIDTH = 150;
@@ -61,11 +61,16 @@ class TicTacToe {
     private posYOffset: number;
     private halfFieldX: number;
     private halfFieldY: number;
+    private conditions: number[][] = [
+        [0, 1, 2], [0, 3, 6], [0, 4, 8],
+        [1, 4, 7], [2, 4, 6], [2, 5, 8], 
+        [3, 4, 5], [6, 7, 8],
+    ];
 
     constructor( private canvas: Canvas ) {
         this.players = [
-            ['X', this.X.bind(this)],
-            ['O', this.O.bind(this)]
+            ['X', this.X.bind(this), []],
+            ['O', this.O.bind(this), []]
         ];
         this.playerIndex = Math.random() > 0.5 ? 1 : 0;
         this.player = this.players[this.playerIndex];
@@ -122,6 +127,14 @@ class TicTacToe {
         this.player = this.players[this.playerIndex];
     }
 
+    private getWinner(fPosArray: number[]) {
+        // check if the player has won the game
+        for (let condition = 0; condition < this.conditions.length; condition++) {
+            const [a, b, c] = this.conditions[condition];
+            if (fPosArray.includes(a) && fPosArray.includes(b) && fPosArray.includes(c)) return true;
+        }
+    }
+    
     private setCurrentFieldIndex() {
         const { mousex, mousey } = this.canvas.mousePositions;
 
@@ -146,7 +159,7 @@ class TicTacToe {
             const fieldCenterX = ((currentCol + 1) * this.FIELD_WIDTH - this.halfFieldX) + this.posXOffset;
             const fieldCenterY = ((currentRow + 1) * this.FIELD_HEIGHT - this.halfFieldY) + this.posYOffset;
 
-            const [value, callback] = this.player;
+            const [value, drawShape, fieldPositions] = this.player;
             
             // When clicked if the block contains the same value (O or X) as the current player
             // then return and dont change the turn of players
@@ -156,9 +169,17 @@ class TicTacToe {
             // draw the shape inside that block
             // also update the turn of players
             if (!this.positions[currentIndex]) {
-                callback(fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
+                drawShape(fieldCenterX, fieldCenterY, this.FIELD_WIDTH / 3);
                 this.setPlayerSymbol();
                 this.positions[currentIndex] = value;
+                fieldPositions.push(currentIndex);
+
+                // after the 3rd click check if the player has won the game
+                // only then sort the field positions
+                if (fieldPositions.length === 3) {
+                    const sortedFieldPositions = fieldPositions.sort((a, b) => a - b);
+                    this.getWinner(sortedFieldPositions);
+                }
             }
         }
     }
